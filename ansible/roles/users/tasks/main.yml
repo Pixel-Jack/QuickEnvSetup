@@ -1,0 +1,7 @@
+---
+- name: "Creating users"
+  include: user.yml
+  with_items: "{{ users }}"
+  loop_control:
+    loop_var: user
+...

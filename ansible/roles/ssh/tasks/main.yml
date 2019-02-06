@@ -1,0 +1,28 @@
+---
+- name: Disabling password authentication
+  become: yes
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    regexp: "^PasswordAuthentication"
+    line: "PasswordAuthentication no"
+
+- name: Disabling root login
+  become: yes
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    regexp: "^PermitRootLogin"
+    line: "PermitRootLogin no"
+
+- name: "Setting port to {{ ssh_port }}"
+  become: yes
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    regexp: "^Port"
+    line: "Port {{ ssh_port }}"
+
+- name: Restarting service
+  become: yes
+  service:
+    name: ssh
+    state: restarted
+...

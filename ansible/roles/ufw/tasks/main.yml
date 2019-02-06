@@ -1,0 +1,79 @@
+---
+- name: "Installing"
+  become: yes
+  apt:
+    name: ufw
+
+- name: "Setting default outgoing policy to allow"
+  become: yes
+  ufw:
+    policy: allow
+    direction: outgoing
+
+- name: "Setting default incoming policy to deny"
+  become: yes
+  ufw:
+    policy: deny
+    direction: incoming
+
+- name: "Allowing SSH on port 22 for git (with limit rule)"
+  become: yes
+  ufw:
+    rule: limit
+    port: ssh
+    proto: tcp
+
+- name: "Allowing SSH on port 7777 (with limit rule)"
+  become: yes
+  ufw:
+    rule: limit
+    port: 7777
+    proto: tcp
+
+- name: "Allowing http"
+  become: yes
+  ufw:
+    rule: allow
+    port: http
+    proto: tcp
+
+- name: "Allowing https"
+  become: yes
+  ufw:
+    rule: allow
+    port: https
+    proto: tcp
+
+- name: "Allowing smtp"
+  become: yes
+  ufw:
+    rule: allow
+    port: smtp
+    proto: tcp
+
+- name: "Allowing port 143/tcp for STARTTLS IMAP"
+  become: yes
+  ufw:
+    rule: allow
+    port: 143
+    proto: tcp
+
+- name: "Allowing port 587/tcp for TLS client email submission"
+  become: yes
+  ufw:
+    rule: allow
+    port: 587
+    proto: tcp
+
+- name: "Allowing port 993/tcp for TLS/SSL IMAP"
+  become: yes
+  ufw:
+    rule: allow
+    port: 993
+    proto: tcp
+
+- name: "Enabling"
+  become: yes
+  ufw:
+    state: enabled
+...

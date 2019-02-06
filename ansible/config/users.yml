@@ -1,0 +1,12 @@
+---
+password_salt: YOUR_PASSWORD_SALT
+default_password: "{{ 'test' | password_hash('sha512', password_salt) }}"
+
+users:
+  - name: YOUR_PROJECT
+    sudo: no
+    docker: yes
+    create_folders:
+      - prod
+      - staging
+...

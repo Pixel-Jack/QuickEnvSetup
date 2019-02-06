@@ -1,0 +1,45 @@
+---
+- name: Adding Docker APT key
+  become: yes
+  apt_key:
+    key: 0EBFCD88
+    url: https://download.docker.com/linux/debian/gpg
+    state: present
+
+- name: Adding Docker APT repository
+  become: yes
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
+    state: present
+    update_cache: yes
+
+- name: "Installing dependencies"
+  become: yes
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg2
+      - software-properties-common
+
+- name: Installing Docker
+  become: yes
+  apt:
+    name: docker-ce
+
+- name: Downloading docker-compose
+  become: yes
+  get_url:
+    url: https://github.com/docker/compose/releases/download/1.23.2/docker-compose-Linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
+
+- name: Adding users to group docker
+  when: item.docker is defined and item.docker
+  with_items: "{{ users }}"
+  user:
+    name: "{{ item.name }}"
+    groups: docker
+    append: yes
+...

@@ -1,0 +1,6 @@
+---
+- name: "Installing {{ utils }}"
+  become: yes
+  apt:
+    name: "{{ utils }}"
+...

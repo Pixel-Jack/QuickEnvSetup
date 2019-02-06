@@ -1,0 +1,36 @@
+---
+- name: "Creating user {{ user.name }}"
+  become: yes
+  user:
+    name: "{{ user.name }}"
+    generate_ssh_key: yes
+    ssh_key_bits: 4096
+    ssh_key_comment: "{{ user.name }}@{{ hostname }}"
+    password: "{{ default_password }}"
+    update_password: on_create
+
+- name: "Adding user {{ user.name }} to sudo group"
+  become: yes
+  when: user.sudo is defined and user.sudo
+  user:
+    name: "{{ user.name }}"
+    groups: sudo
+    append: yes
+
+- name: "Adding SSH public key to user {{ user.name }}"
+  become: yes
+  become_user: "{{ user.name }}"
+  when: user.ssh_key_file is defined
+  authorized_key:
+    user: "{{ user.name }}"
+    key: "{{ lookup('file', user.ssh_key_file) }}"
+
+- name: "Creating folders in {{ user.name }} home"
+  become: yes
+  become_user: "{{ user.name }}"
+  when: user.create_folders is defined
+  with_items: "{{ user.create_folders }}"
+  file:
+    path: "/home/{{ user.name }}/{{ item }}"
+    state: directory
+...

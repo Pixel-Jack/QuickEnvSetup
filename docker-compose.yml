@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  nginx:
+    build: ./nginx/
+    container_name: ${ENVIRONMENT}_nginx
+    command: ./script/start.sh
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - ./nginx/logs:/etc/nginx/logs
+      # Path to certificates
+      - ./ssl:/tmp/ssl:ro
+      - serve_nginx:/home/nginx/serve_nginx
+  mail:
+    image: tvial/docker-mailserver:latest
+    container_name: ${ENVIRONMENT}_mail
+    # Must match the service name
+    hostname: mail
+    domainname: ${DOMAIN_NAME}
+    env_file:
+      - mailserver/.env.config
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+    restart: always
+    volumes:
+      - maildata:/var/mail
+      - mailstate:/var/mail-state
+      - ./mailserver/config/:/tmp/docker-mailserver/
+      # Path to certificates
+      - ./ssl:/tmp/ssl:ro
+
+volumes:
+  maildata:
+    driver: local
+  mailstate:
+    driver: local
+  serve_nginx:
